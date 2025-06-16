@@ -60,7 +60,8 @@ export const authApi = {
 
   async logout(): Promise<void> {
     try {
-      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+      // await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+      console.log("Logout request");
     } catch (error) {
       // Even if logout fails on server, we should clear local storage
       console.warn("Logout request failed, but continuing with local cleanup");

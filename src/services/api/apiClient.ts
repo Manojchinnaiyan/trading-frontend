@@ -16,6 +16,7 @@ class ApiClient {
 
   // Method to set auth context for logout functionality
   setAuthContext(authContext: any) {
+    console.log("Setting auth context:", authContext);
     this.authContext = authContext;
   }
 
@@ -45,6 +46,13 @@ class ApiClient {
         data,
       };
 
+      console.log("API Error:", {
+        status: response.status,
+        message: error.message,
+        url: response.url,
+        data: data,
+      });
+
       // Handle token expiration/invalid token
       if (response.status === 401) {
         this.handleUnauthorized(error.message);
@@ -57,6 +65,10 @@ class ApiClient {
   }
 
   private handleUnauthorized(errorMessage: string) {
+    console.log("Handling unauthorized error:", errorMessage);
+    console.log("Auth context available:", !!this.authContext);
+    console.log("Logout function available:", !!this.authContext?.logout);
+
     // Check if the error is about invalid/expired token
     const tokenErrorKeywords = [
       "token is expired",
@@ -66,37 +78,88 @@ class ApiClient {
       "unauthorized",
       "token expired",
       "session expired",
+      "authentication",
+      "jwt",
     ];
 
     const isTokenError = tokenErrorKeywords.some((keyword) =>
       errorMessage.toLowerCase().includes(keyword.toLowerCase())
     );
 
-    if (isTokenError && this.authContext?.logout) {
-      console.log("Token invalid/expired, auto-logout triggered");
+    console.log(
+      "Is token error:",
+      isTokenError,
+      "Error message:",
+      errorMessage
+    );
 
-      // Clear tokens immediately
+    // Always try to logout on 401, regardless of error message
+    if (this.authContext?.logout) {
+      console.log("Calling logout function...");
+
+      try {
+        // Clear tokens immediately
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.USER_EMAIL);
+        console.log("Tokens cleared from localStorage");
+
+        // Call logout function
+        this.authContext.logout();
+        console.log("Logout function called successfully");
+
+        // Show notification
+        this.showLoginRequiredNotification();
+      } catch (logoutError) {
+        console.error("Error during logout:", logoutError);
+
+        // Force redirect to login as fallback
+        this.forceRedirectToLogin();
+      }
+    } else {
+      console.warn(
+        "Auth context or logout function not available, forcing redirect"
+      );
+
+      // Clear tokens even if logout function is not available
       localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
       localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
       localStorage.removeItem(LOCAL_STORAGE_KEYS.USER_EMAIL);
 
-      // Call logout
-      this.authContext.logout();
-
-      // Show notification
-      this.showLoginRequiredNotification();
+      // Force redirect as fallback
+      this.forceRedirectToLogin();
     }
   }
 
   private showLoginRequiredNotification() {
-    // Show notification
-    const event = new CustomEvent("showNotification", {
-      detail: {
-        message: "Session expired. Please sign in again.",
-        type: "warning",
-      },
-    });
-    window.dispatchEvent(event);
+    try {
+      // Show notification
+      const event = new CustomEvent("showNotification", {
+        detail: {
+          message: "Session expired. Please sign in again.",
+          type: "warning",
+        },
+      });
+      window.dispatchEvent(event);
+      console.log("Login required notification dispatched");
+    } catch (error) {
+      console.error("Error showing notification:", error);
+    }
+  }
+
+  private forceRedirectToLogin() {
+    console.log("Force redirecting to login...");
+
+    try {
+      // Try to use router if available
+      if (window.location.pathname !== "/auth") {
+        window.location.href = "/auth";
+      }
+    } catch (error) {
+      console.error("Error during force redirect:", error);
+      // Last resort - reload the page
+      window.location.reload();
+    }
   }
 
   private async makeRequest<T>(
@@ -193,6 +256,15 @@ class ApiClient {
 
   setTimeout(timeout: number): void {
     this.timeout = timeout;
+  }
+
+  // Debug method to check auth context
+  debugAuthContext() {
+    console.log("Auth context debug:", {
+      hasContext: !!this.authContext,
+      hasLogout: !!this.authContext?.logout,
+      context: this.authContext,
+    });
   }
 }
 

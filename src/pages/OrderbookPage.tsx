@@ -60,10 +60,30 @@ const OrderbookPage: React.FC = () => {
 
   const handleFABOrderSelect = (type: OrderType) => {
     console.log("FAB order type selected:", type);
-    // For orderbook page, we could open a general order pad or show a stock selector
-    alert(
-      `${type} order selected. This would typically open a stock selector or general order pad.`
-    );
+
+    // Auto-select first order if available
+    if (filteredOrders && filteredOrders.length > 0) {
+      const firstOrder = filteredOrders[0];
+      setSelectedOrder(firstOrder);
+      setOrderPadType(type);
+      console.log("Auto-selected first order:", firstOrder.symbol, "for", type);
+    } else if (data?.orders && data.orders.length > 0) {
+      // If no filtered orders but orders exist, use first order from all orders
+      const firstOrder = data.orders[0];
+      setSelectedOrder(firstOrder);
+      setOrderPadType(type);
+      console.log(
+        "Auto-selected first order from all orders:",
+        firstOrder.symbol,
+        "for",
+        type
+      );
+    } else {
+      // No orders available
+      alert(
+        `No orders available for ${type} action. Please place some orders first.`
+      );
+    }
   };
 
   const filterOptions: Array<{

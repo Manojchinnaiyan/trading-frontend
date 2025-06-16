@@ -98,7 +98,7 @@ const OrderPad: React.FC<OrderPadProps> = ({
   const isMarketOrder = orderData.orderType === "MARKET";
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end mb-16">
       <div
         className={`w-full bg-white rounded-t-xl animate-slide-up ${
           type === "BUY"

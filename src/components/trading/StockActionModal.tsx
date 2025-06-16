@@ -32,7 +32,7 @@ const StockActionModal: React.FC<StockActionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end mb-16">
       <div className="w-full bg-white rounded-t-xl animate-slide-up">
         <div className="p-6">
           {/* Header */}
@@ -68,7 +68,7 @@ const StockActionModal: React.FC<StockActionModalProps> = ({
               {/* Buy Button */}
               <button
                 onClick={handleBuyClick}
-                className="flex flex-col items-center justify-center p-6 bg-success-50 hover:bg-success-100 border-2 border-success-200 hover:border-success-300 rounded-lg transition-all transform hover:scale-105"
+                className="flex flex-col items-center justify-center p-6 bg-success-50 hover:bg-success-100 border-2 border-success-200 hover:border-success-300 rounded-lg transition-all transform hover:scale-105 mb-3"
               >
                 <div className="w-12 h-12 bg-success-500 rounded-full flex items-center justify-center mb-3">
                   <TrendingUp className="w-6 h-6 text-white" />
@@ -84,7 +84,7 @@ const StockActionModal: React.FC<StockActionModalProps> = ({
               {/* Sell Button */}
               <button
                 onClick={handleSellClick}
-                className="flex flex-col items-center justify-center p-6 bg-danger-50 hover:bg-danger-100 border-2 border-danger-200 hover:border-danger-300 rounded-lg transition-all transform hover:scale-105"
+                className="flex flex-col items-center justify-center p-6 bg-danger-50 hover:bg-danger-100 border-2 border-danger-200 hover:border-danger-300 rounded-lg transition-all transform hover:scale-105 mb-3"
               >
                 <div className="w-12 h-12 bg-danger-500 rounded-full flex items-center justify-center mb-3">
                   <TrendingDown className="w-6 h-6 text-white" />

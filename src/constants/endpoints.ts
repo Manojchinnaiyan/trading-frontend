@@ -4,7 +4,6 @@ export const API_ENDPOINTS = {
     LOGIN: "/auth/login",
     SIGNUP: "/auth/signup",
     REFRESH: "/auth/refresh",
-    LOGOUT: "/auth/logout",
   },
 
   // Trading
